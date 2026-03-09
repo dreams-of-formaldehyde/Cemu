@@ -6,7 +6,7 @@
 #include "Cafe/HW/Latte/Core/LatteAsyncCommands.h"
 #include "Cafe/GameProfile/GameProfile.h"
 #include "Cafe/GraphicPack/GraphicPack2.h"
-#include "gui/guiWrapper.h"
+#include "WindowSystem.h"
 
 #include "Cafe/HW/Latte/Core/LatteBufferCache.h"
 
@@ -30,6 +30,7 @@ void Latte_LoadInitialRegisters()
 {
 	LatteGPUState.contextNew.CB_TARGET_MASK.set_MASK(0xFFFFFFFF);
 	LatteGPUState.contextNew.VGT_MULTI_PRIM_IB_RESET_INDX.set_RESTART_INDEX(0xFFFFFFFF);
+	LatteGPUState.contextNew.VGT_DMA_NUM_INSTANCES.set_NUM_INSTANCES(1);
 	LatteGPUState.contextRegister[Latte::REGADDR::PA_CL_CLIP_CNTL] = 0;
 	*(float*)&LatteGPUState.contextRegister[mmDB_DEPTH_CLEAR] = 1.0f;
 }
@@ -115,7 +116,7 @@ int Latte_ThreadEntry()
 {
 	SetThreadName("LatteThread");
 	sint32 w,h;
-	gui_getWindowPhysSize(w,h);
+	WindowSystem::GetWindowPhysSize(w,h);
 
 	// renderer
 	g_renderer->Initialize();
@@ -166,8 +167,7 @@ int Latte_ThreadEntry()
 
 		g_renderer->DrawEmptyFrame(true);
 		g_renderer->DrawEmptyFrame(false);
-
-		gui_hasScreenshotRequest(); // keep the screenshot request queue empty
+		g_renderer->CancelScreenshotRequest(); // keep the screenshot request queue empty
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000/60));
 	}
 

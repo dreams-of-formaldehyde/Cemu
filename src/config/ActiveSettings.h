@@ -83,7 +83,6 @@ public:
 	// general
 	[[nodiscard]] static bool LoadSharedLibrariesEnabled();
 	[[nodiscard]] static bool DisplayDRCEnabled();
-	[[nodiscard]] static bool FullscreenEnabled();
 
 	// cpu
 	[[nodiscard]] static CPUMode GetCPUMode();
@@ -96,6 +95,10 @@ public:
 	[[nodiscard]] static bool RenderUpsideDownEnabled();
 	[[nodiscard]] static bool WaitForGX2DrawDoneEnabled();
 	[[nodiscard]] static GraphicAPI GetGraphicsAPI();
+
+	// gamma
+	[[nodiscard]] static float GetTVGamma();
+	[[nodiscard]] static float GetDRCGamma();
 
 	// audio
 	[[nodiscard]] static bool AudioOutputOnlyAux();

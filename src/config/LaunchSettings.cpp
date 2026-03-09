@@ -6,7 +6,6 @@
 #include "Cafe/OS/libs/coreinit/coreinit.h"
 
 #include "boost/program_options.hpp"
-#include <wx/msgdlg.h>
 
 #include "config/ActiveSettings.h"
 #include "config/NetworkSettings.h"
@@ -59,6 +58,9 @@ bool LaunchSettings::HandleCommandline(const std::vector<std::wstring>& args)
 	desc.add_options()
 		("help,h", "This help screen")
 		("version,v", "Displays the version of Cemu")
+#if !BOOST_OS_WINDOWS
+		("verbose", "Log to stdout")
+#endif
 
 		("game,g", po::wvalue<std::wstring>(), "Path of game to launch")
         ("title-id,t", po::value<std::string>(), "Title ID of the title to be launched (overridden by --game)")
@@ -124,6 +126,9 @@ bool LaunchSettings::HandleCommandline(const std::vector<std::wstring>& args)
 			std::cout << versionStr << std::endl;
 			return false; // exit in main
 		}
+
+		if (vm.count("verbose"))
+			s_verbose = true;
 
 		if (vm.count("game"))
 		{
@@ -220,11 +225,7 @@ bool LaunchSettings::HandleCommandline(const std::vector<std::wstring>& args)
 		std::string errorMsg;
 		errorMsg.append("Error while trying to parse command line parameter:\n");
 		errorMsg.append(ex.what());
-#if BOOST_OS_WINDOWS
-		wxMessageBox(errorMsg, "Parameter error", wxICON_ERROR);
-#else
 		std::cout << errorMsg << std::endl;
-#endif
 		return false;
 	}
 	
